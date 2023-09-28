@@ -27,6 +27,7 @@ use Sabre\VObject\Component\VCalendar;
 use Sabre\VObject\ITip;
 use Sabre\VObject\ITip\Message;
 use Sabre\VObject\Reader;
+use function Sabre\HTTP\decodePath;
 
 /**
  * CalDAV scheduling plugin.
@@ -459,9 +460,17 @@ class Plugin extends ServerPlugin
             return;
         }
 
-        $calendarPath = $result[$caldavNS.'schedule-default-calendar-URL']->getHref();
-        $homePath = $result[$caldavNS.'calendar-home-set']->getHref();
-        $inboxPath = $result[$caldavNS.'schedule-inbox-URL']->getHref();
+        /** @var LocalHref $calendarHref */
+        $calendarHref = $result[$caldavNS.'schedule-default-calendar-URL'];
+        $calendarPath = decodePath($calendarHref->getHref());
+
+        /** @var LocalHref $homeHref */
+        $homeHref = $result[$caldavNS.'calendar-home-set'];
+        $homePath = decodePath($homeHref->getHref());
+
+        /** @var LocalHref $inboxHref */
+        $inboxHref = $result[$caldavNS.'schedule-inbox-URL'];
+        $inboxPath = decodePath($inboxHref->getHref());
 
         if ('REPLY' === $iTipMessage->method) {
             $privilege = 'schedule-deliver-reply';

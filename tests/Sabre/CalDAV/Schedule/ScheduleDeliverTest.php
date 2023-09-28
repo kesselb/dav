@@ -24,7 +24,7 @@ class ScheduleDeliverTest extends \Sabre\DAVServerTest
         ],
         [
             'principaluri' => 'principals/user2',
-            'uri' => 'cal',
+            'uri' => 'persönlich',
         ],
     ];
 
@@ -315,7 +315,7 @@ END:VEVENT
 END:VCALENDAR
 ICS;
 
-        $this->putPath('calendars/user2/cal/foo.ics', $oldObject);
+        $this->putPath('calendars/user2/persönlich/foo.ics', $oldObject);
 
         $this->deliver($oldObject, $newObject);
         self::assertItemsInInbox('user2', 1);

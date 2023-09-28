@@ -45,12 +45,28 @@ class LocalHrefTest extends XmlTest
 ', $xml);
     }
 
+    public function testSerializeUmlauts()
+    {
+        $href = new LocalHref('/dav/calendar/persönlich');
+        self::assertEquals('/dav/calendar/pers%c3%b6nlich', $href->getHref());
+
+        $this->contextUri = '/dav/';
+
+        $xml = $this->write(['{DAV:}anything' => $href]);
+
+        self::assertXmlStringEqualsXmlString(
+            '<?xml version="1.0"?>
+<d:anything xmlns:d="DAV:"><d:href>/dav/calendar/pers%c3%b6nlich</d:href></d:anything>
+', $xml);
+    }
+
     public function testToHtml()
     {
         $href = new LocalHref([
             '/foo/bar',
             'foo/bar',
             'http://example.org/bar',
+            '/calendar/persönlich',
         ]);
 
         $html = new HtmlOutputHelper(
@@ -61,7 +77,8 @@ class LocalHrefTest extends XmlTest
         $expected =
             '<a href="/foo/bar">/foo/bar</a><br />'.
             '<a href="/base/foo/bar">/base/foo/bar</a><br />'.
-            '<a href="http://example.org/bar">http://example.org/bar</a>';
+            '<a href="http://example.org/bar">http://example.org/bar</a><br />'.
+            '<a href="/calendar/pers%c3%b6nlich">/calendar/pers%c3%b6nlich</a>';
         self::assertEquals($expected, $href->toHtml($html));
     }
 }
